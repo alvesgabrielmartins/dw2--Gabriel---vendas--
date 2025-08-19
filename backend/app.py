@@ -1,8 +1,8 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from fastapi.responses import JSONResponse
+from database import Base, engine
+from routes import router
 
 # Configuração do FastAPI
 app = FastAPI(
@@ -20,24 +20,26 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Configuração do SQLAlchemy
-SQLALCHEMY_DATABASE_URL = "sqlite:///./loja_escolar.db"
-engine = create_engine(
-    SQLALCHEMY_DATABASE_URL, 
-    connect_args={"check_same_thread": False}
-)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-Base = declarative_base()
-
-# Importar modelos e rotas
-from models import *
-from routes import router
-
 # Criar tabelas
 Base.metadata.create_all(bind=engine)
 
 # Registrar rotas
 app.include_router(router, prefix="/api")
+
+# Handlers de erro
+@app.exception_handler(HTTPException)
+async def http_exception_handler(request, exc):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.detail},
+    )
+
+@app.exception_handler(Exception)
+async def general_exception_handler(request, exc):
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "Internal Server Error"},
+    )
 
 if __name__ == "__main__":
     import uvicorn
