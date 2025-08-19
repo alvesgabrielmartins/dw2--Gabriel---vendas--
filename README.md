@@ -2,6 +2,13 @@
 
 Sistema web de vendas desenvolvido com FastAPI no backend e JavaScript puro no frontend.
 
+## Descrição
+
+O sistema permite gerenciar:
+- Produtos
+- Vendas
+- Relatórios
+
 ## Estrutura do Projeto
 
 ```
@@ -90,3 +97,26 @@ Ou simplesmente abra o arquivo `index.html` diretamente no navegador.
 - `POST /produtos` - Cadastra um novo produto
 - `GET /vendas` - Lista todas as vendas
 - `POST /vendas` - Registra uma nova venda
+
+- Clientes
+- Vendas
+- Relatórios
+
+## Como utilizar
+
+1. Clone o repositório
+2. Instale as dependências
+3. Execute o projeto
+
+## Tecnologias utilizadas
+
+- [Liste aqui as tecnologias que serão utilizadas]
+
+## Contribuição
+
+Sinta-se livre para contribuir com o projeto através de Pull Requests.
+
+## Licença
+
+Este projeto está sob a licença MIT.
+>>>>>>> d4080c9f22d22ccad204aa849ce9035ca29afdb6
