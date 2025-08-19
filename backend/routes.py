@@ -1,10 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
+from sqlalchemy import asc, desc
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from pydantic import BaseModel, constr, confloat, conint
 from datetime import datetime
-from models import Produto, Pedido, ItemPedido
-from main import SessionLocal
+from models import Produto, Pedido
+from database import get_db
 
 # Schemas Pydantic
 class ProdutoBase(BaseModel):
