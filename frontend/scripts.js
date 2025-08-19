@@ -5,6 +5,34 @@ const API_URL = 'http://localhost:8000';
 let produtos = [];
 let carrinho = [];
 let cupomAplicado = null;
+let filtrosAtivos = {
+    busca: '',
+    categoria: '',
+    precoMin: null,
+    precoMax: null,
+    ordenacao: '',
+    apenasEmEstoque: false
+};
+
+// Gerenciamento de Tema
+function initTheme() {
+    const theme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', theme);
+    return theme;
+}
+
+function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    
+    // Atualizar aria-label do botão
+    const themeButton = document.getElementById('theme-toggle');
+    themeButton.setAttribute('aria-label', 
+        `Alternar para tema ${newTheme === 'light' ? 'escuro' : 'claro'}`
+    );
+}
 
 // Funções de utilidade
 const formatarPreco = (preco) => {
@@ -153,8 +181,62 @@ function carregarCarrinho() {
     }
 }
 
+// Filtros avançados
+function aplicarFiltros(produtos) {
+    return produtos.filter(produto => {
+        // Filtro de busca
+        if (filtrosAtivos.busca && !produto.nome.toLowerCase().includes(filtrosAtivos.busca.toLowerCase())) {
+            return false;
+        }
+        
+        // Filtro de categoria
+        if (filtrosAtivos.categoria && produto.categoria !== filtrosAtivos.categoria) {
+            return false;
+        }
+        
+        // Filtro de preço mínimo
+        if (filtrosAtivos.precoMin && produto.preco < filtrosAtivos.precoMin) {
+            return false;
+        }
+        
+        // Filtro de preço máximo
+        if (filtrosAtivos.precoMax && produto.preco > filtrosAtivos.precoMax) {
+            return false;
+        }
+        
+        // Filtro de estoque
+        if (filtrosAtivos.apenasEmEstoque && produto.estoque === 0) {
+            return false;
+        }
+        
+        return true;
+    }).sort((a, b) => {
+        if (!filtrosAtivos.ordenacao) return 0;
+        
+        switch (filtrosAtivos.ordenacao) {
+            case 'preco_asc':
+                return a.preco - b.preco;
+            case 'preco_desc':
+                return b.preco - a.preco;
+            case 'nome':
+                return a.nome.localeCompare(b.nome);
+            default:
+                return 0;
+        }
+    });
+}
+
+function atualizarListaProdutos() {
+    const produtosFiltrados = aplicarFiltros(produtos);
+    renderizarProdutos(produtosFiltrados);
+}
+
 // Event Listeners
 document.addEventListener('DOMContentLoaded', () => {
+    // Inicializar tema
+    initTheme();
+    
+    // Carregar dados
     getProdutos();
     carregarCarrinho();
 
@@ -242,25 +324,48 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Busca e ordenação
-    document.getElementById('search-input').addEventListener('input', (e) => {
-        const termo = e.target.value.toLowerCase();
-        produtos.forEach(produto => {
-            const card = document.querySelector(`[data-id="${produto.id}"]`);
-            if (card) {
-                card.style.display = produto.nome.toLowerCase().includes(termo) ? 'block' : 'none';
-            }
-        });
+    // Tema
+    document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+
+    // Filtros
+    const filterForm = document.getElementById('filter-form');
+    const filterButton = document.getElementById('filter-button');
+    const filterPanel = document.getElementById('filter-panel');
+    
+    filterButton.addEventListener('click', () => {
+        const isExpanded = filterPanel.classList.toggle('active');
+        filterButton.setAttribute('aria-expanded', isExpanded);
+        filterPanel.setAttribute('aria-hidden', !isExpanded);
     });
 
-    let ordemAscendente = true;
-    document.getElementById('sort-button').addEventListener('click', () => {
-        ordemAscendente = !ordemAscendente;
-        produtos.sort((a, b) => {
-            return ordemAscendente 
-                ? a.preco - b.preco 
-                : b.preco - a.preco;
-        });
-        renderizarProdutos();
+    filterForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        filtrosAtivos = {
+            busca: document.getElementById('search-input').value,
+            categoria: document.getElementById('categoria-select').value,
+            precoMin: document.getElementById('preco-min').value ? parseFloat(document.getElementById('preco-min').value) : null,
+            precoMax: document.getElementById('preco-max').value ? parseFloat(document.getElementById('preco-max').value) : null,
+            ordenacao: document.getElementById('sort-select').value,
+            apenasEmEstoque: document.getElementById('em-estoque').checked
+        };
+        
+        atualizarListaProdutos();
+        filterPanel.classList.remove('active');
+        filterButton.setAttribute('aria-expanded', 'false');
+        filterPanel.setAttribute('aria-hidden', 'true');
+    });
+
+    document.getElementById('limpar-filtros').addEventListener('click', () => {
+        filterForm.reset();
+        filtrosAtivos = {
+            busca: '',
+            categoria: '',
+            precoMin: null,
+            precoMax: null,
+            ordenacao: '',
+            apenasEmEstoque: false
+        };
+        atualizarListaProdutos();
     });
 });
