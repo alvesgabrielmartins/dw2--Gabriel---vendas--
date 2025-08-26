@@ -23,6 +23,11 @@ app.add_middleware(
 # Criar tabelas
 Base.metadata.create_all(bind=engine)
 
+# Rota de health check
+@app.get("/health")
+async def health_check():
+    return {"status": "ok", "timestamp": str(datetime.now())}
+
 # Registrar rotas
 app.include_router(router, prefix="/api")
 
