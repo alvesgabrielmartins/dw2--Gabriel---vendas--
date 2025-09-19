@@ -56,15 +56,19 @@
 
 ## Peculiaridades Implementadas
 
-1. [Primeira peculiaridade]
-   - Descrição da implementação
-   - Tecnologias utilizadas
-   - Desafios encontrados
+Implementamos as seguintes peculiaridades obrigatórias (3 de 10):
 
-2. [Segunda peculiaridade]
-   - Descrição da implementação
-   - Tecnologias utilizadas
-   - Desafios encontrados
+1. Acessibilidade real
+   - Aplicado: `tabindex`, `aria-labels`, foco visível por CSS, contraste de cores e navegação por teclado nas ações principais (filtros, carrinho, formulários).
+   - Tecnologias: HTML5, CSS (outlines e variáveis de tema), JavaScript para gerenciamento de estados ARIA.
+
+2. Seed script com dados plausíveis
+   - Aplicado: `backend/seed.py` insere ~20 produtos no banco SQLite (`app.db`).
+   - Tecnologias: SQLAlchemy + script Python.
+
+3. Filtro avançado e ordenação persistida
+   - Aplicado: painel de filtros (`frontend/index.html`) com busca por nome, categoria, faixa de preço e opção "apenas em estoque"; ordenação por nome/preço com persistência via `localStorage` para manter preferência do usuário.
+   - Tecnologias: JavaScript ES6 (fetch + DOM) e `localStorage`.
 
 ## Validações
 
@@ -78,11 +82,11 @@
 # Exemplos de validações no backend
 ```
 
-## Acessibilidade
+## Acessibilidade (detalhes aplicados)
 
 1. Semântica HTML5
-   - Uso apropriado de tags semânticas
-   - Estrutura hierárquica clara
+   - Uso de `header`, `main`, `nav`, `section` e botões com `aria-*`.
+   - Estrutura hierárquica clara e labels em formulários.
 
 2. ARIA
    - Labels e descrições
@@ -90,41 +94,35 @@
    - Estados dinâmicos
 
 3. Navegação por Teclado
-   - Focus visível
-   - Ordem lógica de tabulação
-   - Atalhos de teclado
+   - Focus visível por CSS (`:focus` outline)
+   - Ordem lógica de tabulação e `tabindex` nos elementos interativos
+   - Atalho para abrir o painel de filtros e o carrinho via teclado (configurado no JS)
 
-## Como Rodar o Projeto
+## Como Rodar o Projeto (resumo)
 
 ### Pré-requisitos
 - Python 3.9+
 - Node.js (opcional, para desenvolvimento frontend)
 - Git
 
-### Passos
+### Passos (Windows - PowerShell)
 
-1. Clone o repositório
-```bash
+1. Clone o repositório e entre na pasta:
+```powershell
 git clone https://github.com/alvesgabrielmartins/dw2--Gabriel---vendas--.git
 cd dw2--Gabriel---vendas--
-```
-
-2. Configure o ambiente backend
-```bash
 cd backend
-python -m venv venv
-source venv/bin/activate  # No Windows: venv\Scripts\activate
-pip install -r requirements.txt
 ```
 
-3. Inicie o servidor backend
-```bash
-uvicorn main:app --reload
+2. Recomendado: execute o helper `run-dev.ps1` (ele cria venv, instala deps, roda seed e inicia o servidor):
+```powershell
+.\run-dev.ps1
 ```
 
-4. Acesse o frontend
-- Abra o arquivo `frontend/index.html` em um navegador
-- Ou use Live Server no VS Code
+3. Rotas úteis após iniciar o servidor:
+- Health: `GET http://127.0.0.1:8000/health`
+- Lista de produtos: `GET http://127.0.0.1:8000/api/produtos`
+- Docs FastAPI: `http://127.0.0.1:8000/docs`
 
 [Screenshots do projeto em execução serão adicionados]
 

@@ -31,6 +31,40 @@ async def health_check():
 # Registrar rotas
 app.include_router(router, prefix="/api")
 
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from database import Base, engine
+from routes import router
+from datetime import datetime
+
+# Configuração do FastAPI
+app = FastAPI(
+    title="Loja Escolar API",
+    description="API para o sistema de vendas da Loja Escolar",
+    version="1.0.0"
+)
+
+# Configuração do CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Em produção, especifique os domínios permitidos
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Criar tabelas
+Base.metadata.create_all(bind=engine)
+
+# Rota de health check
+@app.get("/health")
+async def health_check():
+    return {"status": "ok", "timestamp": str(datetime.now())}
+
+# Registrar rotas
+app.include_router(router, prefix="/api")
+
 # Handlers de erro
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request, exc):

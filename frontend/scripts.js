@@ -1,5 +1,5 @@
 // Configuração da API
-const API_URL = 'http://localhost:8000';
+const API_URL = 'http://localhost:8000/api';
 
 // Estado da aplicação
 let produtos = [];
@@ -98,14 +98,14 @@ function renderizarProdutos() {
                 <div class="produto-info">
                     <h3 class="produto-nome">${produto.nome}</h3>
                     <p class="produto-preco">${formatarPreco(produto.preco)}</p>
-                    <p class="produto-estoque">Estoque: ${produto.quantidade}</p>
+                    <p class="produto-estoque">Estoque: ${produto.quantidade ?? produto.estoque ?? 0}</p>
                     <button 
                         onclick="adicionarAoCarrinho(${produto.id})"
                         class="btn-primary"
-                        ${produto.quantidade === 0 ? 'disabled' : ''}
-                        aria-label="${produto.quantidade === 0 ? 'Produto indisponível' : 'Adicionar ao carrinho'}"
+                        ${(produto.quantidade ?? produto.estoque) === 0 ? 'disabled' : ''}
+                        aria-label="${(produto.quantidade ?? produto.estoque) === 0 ? 'Produto indisponível' : 'Adicionar ao carrinho'}"
                     >
-                        ${produto.quantidade === 0 ? 'Indisponível' : 'Adicionar ao Carrinho'}
+                        ${(produto.quantidade ?? produto.estoque) === 0 ? 'Indisponível' : 'Adicionar ao Carrinho'}
                     </button>
                 </div>
             </div>

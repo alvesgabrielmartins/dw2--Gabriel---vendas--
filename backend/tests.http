@@ -1,0 +1,29 @@
+### Health check
+GET http://127.0.0.1:8000/health
+
+### Listar produtos
+GET http://127.0.0.1:8000/api/produtos
+
+### Criar produto
+POST http://127.0.0.1:8000/api/produtos
+Content-Type: application/json
+
+{
+  "nome": "Produto Teste",
+  "descricao": "Descrição do produto teste",
+  "preco": 9.9,
+  "quantidade": 10,
+  "categoria": "papelaria",
+  "sku": "TEST-001"
+}
+
+### Criar pedido
+POST http://127.0.0.1:8000/api/pedidos
+Content-Type: application/json
+
+{
+  "itens": [
+    { "produto_id": 1, "quantidade": 1 }
+  ],
+  "cupom": "ALUNO10"
+}

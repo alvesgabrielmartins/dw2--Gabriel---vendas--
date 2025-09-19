@@ -33,55 +33,39 @@ O sistema permite gerenciar:
 
 ## Configuração e Execução
 
-### Backend
+### Backend (Windows - PowerShell)
 
-1. Entre na pasta do backend:
-```bash
-cd backend
+1. Abra o PowerShell e vá para a pasta `backend`:
+```powershell
+cd C:\Users\Pass\Downloads\biel\backend
 ```
 
-2. Crie um ambiente virtual Python:
-```bash
+2. Existe um script helper `run-dev.ps1` que automatiza os passos (recomendado):
+```powershell
+.\run-dev.ps1
+```
+
+3. Se preferir fazer manualmente:
+```powershell
 python -m venv venv
-```
-
-3. Ative o ambiente virtual:
-- Windows:
-```bash
-venv\Scripts\activate
-```
-- Linux/Mac:
-```bash
-source venv/bin/activate
-```
-
-4. Instale as dependências:
-```bash
+# se necessário permitir execução temporária de scripts:
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned -Force
+.\venv\Scripts\Activate.ps1
 pip install -r requirements.txt
+pip install uvicorn
+python seed.py
+uvicorn app:app --host 127.0.0.1 --port 8000 --reload
 ```
 
-5. Execute o servidor:
-```bash
-python main.py
-```
-
-O servidor estará rodando em `http://localhost:8000`
+Observação: as rotas do backend usam o prefixo `/api` (ex.: `GET /api/produtos`).
 
 ### Frontend
 
-Para executar o frontend, você pode usar qualquer servidor HTTP simples. Uma opção é usar o módulo `http-server` do Node.js:
-
-1. Instale o http-server globalmente (necessário apenas uma vez):
+Abra `frontend/index.html` diretamente no navegador, ou sirva com `http-server` (opcional):
 ```bash
-npm install -g http-server
+cd frontend
+npx http-server .
 ```
-
-2. Na pasta frontend, execute:
-```bash
-http-server
-```
-
-Ou simplesmente abra o arquivo `index.html` diretamente no navegador.
 
 ## Funcionalidades
 
